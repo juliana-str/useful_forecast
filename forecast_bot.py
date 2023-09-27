@@ -9,7 +9,7 @@ import telegram
 from http import HTTPStatus
 from dotenv import load_dotenv
 from exeptions import GetAPIError, SendMessageError
-from Description import description
+from description import description
 
 load_dotenv()
 
@@ -66,10 +66,9 @@ def get_api_answer(LIMIT):
     except requests.RequestException('Something wrong'):
         raise GetAPIError(
             f'Нет ответа на запрос! Параметры запроса: '
-            f'{ENDPOINT}, {HEADERS}, {params}.'
+            f'{ENDPOINT}, {headers}, {params}.'
         )
     data = json.loads(response.content)
-
     return data
 
 
@@ -91,7 +90,7 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug('Сообщение отправлено.')
-        
+        sys.exit(0)
 
     except telegram.error.TelegramError as error:
         logging.error(f'Сообщение не отправлено! {error}.', exc_info=True)
@@ -128,7 +127,6 @@ if __name__ == '__main__':
     )
 
     bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
-
 
     @bot.message_handler(commands=['start'])
     def start(message):
@@ -168,7 +166,6 @@ if __name__ == '__main__':
         LIMIT = 1
         PARAM = 'fact'
         main(LIMIT, PARAM)
-
 
     bot.polling()
 
