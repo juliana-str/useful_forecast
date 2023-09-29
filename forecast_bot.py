@@ -18,7 +18,7 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 ENDPOINT = 'https://api.weather.yandex.ru/v2/forecast/'
 LIMIT = 1
-PARAM = 'fact'
+PARAM = ''
 
 headers = {
     'X-Yandex-API-Key': f'{YANDEX_WEATHER_TOKEN}',
@@ -80,10 +80,12 @@ def check_response(response):
         raise TypeError('Нет данных.')
     return True
 
+
 def show_response(response, PARAM):
     data = response.get(PARAM)
     forecast = description(data)
     return forecast
+
 
 def send_message(bot, message):
     """Отправка сообщения в телеграмм."""
@@ -91,7 +93,6 @@ def send_message(bot, message):
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.debug('Сообщение отправлено.')
         sys.exit(0)
-
     except telegram.error.TelegramError as error:
         logging.error(f'Сообщение не отправлено! {error}.', exc_info=True)
         raise SendMessageError(f'Сообщение не отправлено! {error}')
@@ -142,8 +143,8 @@ if __name__ == '__main__':
 
     @bot.message_handler(commands=['show_today_forecast'])
     def show_today_forecast(message):
-        LIMIT = 1
-        PARAM = 'hours'
+        # LIMIT = 1
+        PARAM = 'hour'
         main(LIMIT, PARAM)
 
 
