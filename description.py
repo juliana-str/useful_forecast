@@ -1,3 +1,8 @@
+import sys
+from datetime import datetime
+
+DAY_PART = {'night': 'ночью', 'morning': 'утром', 'day': 'днем',
+       'evening': 'вечером', 'fact': 'сейчас'}
 COLD = 'Прохладно, не забудь взять шапку и перчатки!'
 WARM = 'Теплая погодка, можно погулять!'
 NORM = 'Еще не холодно, не сиди дома!'
@@ -20,70 +25,70 @@ WIND_DIR = {'nw': 'северо-западное', 'n': 'северное', 'ne'
             'e': 'восточное', 'se': 'юго-восточное', 's': 'южное',
             'sw': 'юго-западное', 'w': 'западное', 'с': 'штиль'}
 
+day = datetime.today()
+day = day.strftime('%A, %d. %B %Y')
+
+
+def parse_today_data(data):
+    temp = data.get('temp')
+    feels_like = data.get('feels_like')
+    condition = data.get('condition')
+    wind_speed = data.get('wind_speed')
+    wind_dir = data.get('wind_dir')
+    humidity = data.get('humidity')
+    temp_water = data.get('temp_water')
+    is_thunder = data.get('is_thunder')
+    hint = ''
+
+    if temp_water > 19:
+        hint += 'Водичка теплая можно купаться!'
+    if int(temp) >= 15:
+        hint += WARM
+    elif 5 < int(temp) < 15:
+        hint += NORM
+    else:
+        hint += COLD
+    if is_thunder:
+        hint += 'Осторожно, ожидается гроза!'
+
+    return (f'Сегодня, {day} '
+            f'температура воздуха - {temp}, °C (ощущается как - {feels_like}), '
+            f'{CONDITIONS[condition]}, '
+            f'скорость порывов ветра - {wind_speed}, '
+            f'направление ветра - {WIND_DIR[wind_dir]}, '
+            f'влажность воздуха {humidity}%, '
+            f'{hint}. ')
+
+
+def parse_data_for_days(data):
+    forecast_for_days = []
+    for day in data:
+        forecast_for_days.append(day.get('date'))
+        for part, weather in day['parts'].items():
+            daypart = DAY_PART.get(part)
+            temp_avg = weather.get('temp_avg')
+            wind_speed = weather.get('wind_speed')
+            wind_dir = weather.get('wind_dir')
+            humidity = weather.get('humidity')
+            feels_like = weather.get('feels_like')
+            condition = weather.get('condition')
+            forecast_for_part = (
+                f'{daypart} температура воздуха - {temp_avg}°C'
+                f'(ощущается как - {feels_like}), '
+                f'{CONDITIONS[condition]}, '
+                f'скорость порывов ветра - {wind_speed}, '
+                f'направление ветра - {WIND_DIR[wind_dir]}, '
+                f'влажность воздуха {humidity}%. '
+                f'')
+            forecast_for_days.append(forecast_for_part)
+    print(forecast_for_days)
+    return forecast_for_days
 
 def description(data):
-    forecast = []
     if not isinstance(data, list):
-        temp = data.get('temp')
-        feels_like = data.get('feels_like')
-        condition = data.get('condition')
-        wind_speed = data.get('wind_speed')
-        wind_dir = data.get('wind_dir')
-        humidity = data.get('humidity')
-        temp_water = data.get('temp_water')
-        is_thunder = data.get('is_thunder')
-        hint = ''
-
-        if temp_water > 19:
-            hint += 'Водичка теплая можно купаться!'
-        if int(temp) >= 15:
-            hint += WARM
-        elif 5 < int(temp) < 15:
-            hint += NORM
-        else:
-            hint += COLD
-        if is_thunder:
-            hint += 'Осторожно, ожидается гроза!'
-
-        pogoda = (f''
-                f'Температура воздуха - {temp}, °C (ощущается как - {feels_like}), '
-                f'{CONDITIONS[condition]}, ' \
-                f'скорость порывов ветра - {wind_speed}, ' \
-                f'направление ветра - {WIND_DIR[wind_dir]}, ' \
-                f'влажность воздуха {humidity}%, ' \
-                f'{hint}.')
-        forecast.append(pogoda)
-
+        return parse_today_data(data)
     else:
-         for day in data:
-             temp = day.get('temp')
-             feels_like = day.get('feels_like')
-             condition = day.get('condition')
-             wind_speed = day.get('wind_speed')
-             wind_dir = day.get('wind_dir')
-             humidity = day.get('humidity')
-             temp_water = day.get('temp_water')
-             is_thunder = day.get('is_thunder')
-             hint = ''
-
-             if int(temp_water) > 19:
-                 hint += 'Водичка теплая можно купаться!'
-             if int(temp) >= 15:
-                 hint += WARM
-             elif 5 < int(temp) < 15:
-                 hint += NORM
-             else:
-                 hint += COLD
-             if is_thunder:
-                 hint += 'Осторожно, ожидается гроза!'
-
-             pogoda = (f''
-                       f'Температура воздуха - {temp}, °C (ощущается как - {feels_like}), '
-                       f'{CONDITIONS[condition]}, ' \
-                       f'скорость порывов ветра - {wind_speed}, ' \
-                       f'направление ветра - {WIND_DIR[wind_dir]}, ' \
-                       f'влажность воздуха {humidity}%, ' \
-                       f'{hint}.')
-             forecast.append(pogoda)
-
-    return forecast
+        forecast = parse_data_for_days(data)
+        if len(forecast) == 2:
+            return forecast[1]
+        return forecast
