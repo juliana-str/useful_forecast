@@ -66,6 +66,6 @@ python3 manage.py runserver
 
 Стрельникова Юлиана Сергеевна  
 Python-разработчик (Backend)  
-Россия, г. Санкт-Петербург
+Россия, г. Санкт-Петербург                                        
 E-mail: julianka.str@yandex.ru  
 Telegram: @JulianaStr
