@@ -143,8 +143,7 @@ if __name__ == '__main__':
 
     @bot.message_handler(commands=['show_today_forecast'])
     def show_today_forecast(message):
-        # LIMIT = 1
-        PARAM = 'hour'
+        PARAM = 'forecasts'
         main(LIMIT, PARAM)
 
 
@@ -169,5 +168,3 @@ if __name__ == '__main__':
         main(LIMIT, PARAM)
 
     bot.polling()
-
-
