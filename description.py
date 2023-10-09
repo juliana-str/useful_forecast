@@ -86,6 +86,31 @@ def parse_data_for_days(data):
     return ' '.join(forecast_for_days)
 
 
+def parse_data_for_tomorrow(data):
+    date = data.get('date')
+    forecast = []
+    for part, weather in data['parts'].items():
+        if part in DAY_PART.keys():
+            daypart = DAY_PART.get(part)
+            temp_avg = weather.get('temp_avg')
+            wind_speed = weather.get('wind_speed')
+            wind_dir = weather.get('wind_dir')
+            humidity = weather.get('humidity')
+            feels_like = weather.get('feels_like')
+            condition = weather.get('condition')
+            forecast_for_part = (
+                    f'Завтра, {date} '
+                    f'{daypart} температура воздуха {temp_avg}°C '
+                    f'(ощущается как {feels_like}), '
+                    f'{CONDITIONS[condition]}, '
+                    f'скорость порывов ветра - {wind_speed}, '
+                    f'направление ветра - {WIND_DIR[wind_dir]}, '
+                    f'влажность воздуха {humidity}%. '
+                    f'                                        ')
+            forecast.append(forecast_for_part)
+    return ' '.join(forecast)
+
+
 def parse_data_for_week(data):
     forecast_for_days = []
     for day in data:
@@ -96,7 +121,7 @@ def parse_data_for_week(data):
                 temp_avg = weather.get('temp_avg')
                 feels_like = weather.get('feels_like')
                 forecast_for_part = (
-                    f'{daypart} температура воздуха {temp_avg}°C ({feels_like})')
+                    f'{daypart} температура {temp_avg}°C ({feels_like})')
 
                 forecast_for_days.append(forecast_for_part)
     return ' '.join(forecast_for_days)
@@ -109,6 +134,6 @@ def description(data):
         if len(data) == 1:
             return parse_data_for_days(data)
         elif len(data) == 2:
-            return parse_data_for_days(data)
+            return parse_data_for_tomorrow(data[1])
         else:
             return parse_data_for_week(data)
