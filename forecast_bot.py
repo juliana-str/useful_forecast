@@ -6,6 +6,7 @@ import telebot
 import requests
 import telegram
 
+from geopy import geocoders
 from http import HTTPStatus
 from dotenv import load_dotenv
 from exeptions import GetAPIError, SendMessageError
@@ -28,11 +29,18 @@ headers = {
 
 HELP = """
 /help - покажу что умею.
+/show_forecast_fact  - показать погоду сейчас.
 /show_today_forecast - показать погоду на сегодня.
 /show_tomorrow_forecast - показать погоду на завтра.
 /show_forecast_for_week  - показать погоду на неделю.
-/show_forecast_fact  - показать погоду сейчас.
 """
+
+
+# def geo_pos(city: str):
+#     geolocator = geocoders.Nominatim(user_agent="telebot")
+#     latitude = str(geolocator.geocode(city).latitude)
+#     longitude = str(geolocator.geocode(city).longitude)
+#     return latitude, longitude
 
 
 def check_tokens():
@@ -51,6 +59,7 @@ def check_tokens():
 
 def get_api_answer(LIMIT):
     """Получение ответа от API."""
+    # geo_pos()
     params = {
             'lat': 59.9342802,
             'lon': 30.3350986,
